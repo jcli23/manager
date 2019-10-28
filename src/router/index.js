@@ -6,12 +6,12 @@ import form from '../views/form/Form.vue'
 import home_page from '../views/home_page/Home_page.vue'
 import image_upload from '../views/image_upload/Image_upload.vue'
 import label from '../views/label/Label.vue'
-import logon from '../views/logon/Logon.vue'
+// import logon from '../views/logon/Logon.vue'
 import look from '../views/look/Look.vue'
 import out from '../views/out/Out.vue'
 import publish_article from '../views/publish_article/Publish_article.vue'
 import published from '../views/published/Published.vue'
-import register from '../views/register/Register.vue'
+// import register from '../views/register/Register.vue'
 import statistics from '../views/statistics/Statistics.vue'
 import edit from '../views/edit/Edit.vue'
 
@@ -97,14 +97,8 @@ const routes = [
   },
   {
     path:'/logon',
-    component:Home,
-    children:[
-      {
-        path:"",
-        name:"logon",
-        component:logon
-      }
-    ]
+    name:'logon',
+    component:()=>import('../views/logon/Logon.vue'),
   },
   {
     path:'/look',
@@ -152,14 +146,8 @@ const routes = [
   },
   {
     path:'/register',
-    component:Home,
-    children:[
-      {
-        path:"",
-        name:"register",
-        component:register
-      }
-    ]
+    name:'register',
+    component:()=>import('../views/register/Register.vue'),
   },
   {
     path:'/statistics',
@@ -180,5 +168,14 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes
 })
+
+router.beforeEach((to,from,next)=>{
+  let user=localStorage.getItem("user");
+  if(to.path==="/logon" || to.path==="/register") {
+    next();
+  }else {
+    user ? next() :next("/logon");
+  }
+});
 
 export default router

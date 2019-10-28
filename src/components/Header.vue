@@ -1,9 +1,15 @@
 <template>
   <div class="header">
     <div class="top">
-      <div class="left">欢迎XX来到小爱后台管理系统</div>
-      <div class="hello">早上好</div>
-      <div class="time">上次登录时间：</div>
+      <div class="left">欢迎{{name.username}}来到小爱后台管理系统</div>
+      <div class="hello" v-if="hours>=6&&hours<12">早上好,亲爱的{{name.username}}</div>
+      <div class="hello" v-else-if="hours>=12&&hours<14">中午好,亲爱的{{name.username}}</div>
+      <div class="hello" v-else-if="hours>=14&&hours<18">下午好,亲爱的{{name.username}}</div>
+      <div class="hello" v-else-if="hours>=18&&hours<=23">晚上好,亲爱的{{name.username}}</div>
+      <div class="hello" v-else>该睡觉了,亲爱的{{name.username}}</div>
+      <div class="time">上次登录时间：
+        {{this.$dayjs(this.$store.state.time).format("YYYY年MM月DD日 hh时mm分ss秒")}}
+      </div>
     </div>
   </div>
   
@@ -15,17 +21,28 @@
     components: {},
     props: {},
     data() {
-      return {}
+      return {
+        hours:''
+      }
     },
-    methods: {},
+    methods: {
+      getTime(){
+        let nowTime=new Date();
+        this.hours=nowTime.getHours();
+      }
+    },
     mounted() {
-
+      this.getTime()
     },
     created() {
 
     },
     filters: {},
-    computed: {},
+    computed: {
+      name(){
+        return JSON.parse(localStorage.getItem("user")).user.data[0]
+      }
+    },
     watch: {},
     directives: {}
   }
@@ -41,20 +58,20 @@
       height: 60px;
       background: darkslategray;
       .left{
-        font-size: 18px;
+        font-size: 14px;
         color: white;
       }
       .hello{
         position: absolute;
-        font-size: 18px;
+        font-size: 14px;
         color: white;
-        right: 500px;
+        left: 1100px;
       }
       .time{
         position: absolute;
-        font-size: 18px;
+        font-size: 14px;
         color: white;
-        right: 250px;
+        left: 1250px;
       }
 
     }

@@ -16,8 +16,25 @@
       <div>{{item.ORI_PRICE}}</div>
       <div>{{item.PRESENT_PRICE}}</div>
       <div class="button">
-        <el-button type="primary" @click="open"><i class="el-icon-edit"></i>修改</el-button>
-        <el-button type="danger"><i class="el-icon-delete"></i>删除</el-button>
+        <el-button type="primary" @click="getrow(item)"><i class="el-icon-edit"></i>修改</el-button>
+        <el-dialog :visible.sync="dialogFormVisible">
+          <el-form :model="row_item">
+            <el-form-item label="名称:" :label-width="formLabelWidth">
+              <el-input v-model="row_item.NAME" autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="原价:" :label-width="formLabelWidth">
+              <el-input v-model="row_item.ORI_PRICE" autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="现价:" :label-width="formLabelWidth">
+              <el-input v-model="row_item.PRESENT_PRICE" autocomplete="off"></el-input>
+            </el-form-item>
+          </el-form>
+          <div slot="footer" class="dialog-footer">
+            <el-button @click="dialogFormVisible = false">取 消</el-button>
+            <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+          </div>
+        </el-dialog>
+        <el-button type="danger" @click="delrow(index)"><i class="el-icon-delete"></i>删除</el-button>
       </div>
     </div>
     <div class="page">
@@ -44,9 +61,16 @@
       return {
         tableData:[],
         currentPage:1,
+        row_item:'',
+        row_index:'',
         pages:10,
         pagesNum:1,
-      }
+        dialogFormVisible: false,
+        form: {
+          name: '',
+        },
+        formLabelWidth: '120px'
+      };
     },
     methods: {
       gettableData () {
@@ -66,16 +90,12 @@
         // console.log(`当前页: ${val}`);
         this.pagesNum=val
       },
-      open() {
-        this.$alert('这是一段内容', '标题名称', {
-          confirmButtonText: '确定',
-          callback: action => {
-            this.$message({
-              type: 'info',
-              message: `action: ${ action }`
-            });
-          }
-        });
+      getrow(item){
+        this.dialogFormVisible = true
+        this.row_item=item
+      },
+      delrow(index){
+        this.tableData.splice(index,1)
       }
     },
     mounted() {
