@@ -1,8 +1,8 @@
 <template>
   <div class="all">
-    <div class="top"><top></top></div>
-    <div class="navig"><navigator></navigator></div>
-    <router-view class="right"></router-view>
+    <div class="top"><top></top></div>         <!--共同头部组件-->
+    <div class="navig"><navigator></navigator></div>     <!--共同侧边栏组件-->
+    <router-view class="right"></router-view>          <!--共同区域引入路由-->
   </div>
   
 </template>
@@ -44,17 +44,17 @@
       width: 100%;
       position: fixed;
       height: 60px;
-      z-index: 100;
+      z-index: 100;         //头部样式
     }
     .navig{
       width: 13%;
       height: 750px;
       position: fixed;
-      background-color: rgb(84, 92, 100);
+      background-color: rgb(84, 92, 100);    //侧边栏样式
       margin-top:60px;
     }
     .right{
-      width: 87%;
+      width: 87%;              //共同路由区域样式
       margin-top: 60px;
       margin-left: 13%;
     }

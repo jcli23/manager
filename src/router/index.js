@@ -3,15 +3,13 @@ import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import derive from '../views/derive/Derive.vue'
 import form from '../views/form/Form.vue'
-import home_page from '../views/home_page/Home_page.vue'
+import home_page from '../views/main/Main.vue'
 import image_upload from '../views/image_upload/Image_upload.vue'
 import label from '../views/label/Label.vue'
-// import logon from '../views/logon/Logon.vue'
 import look from '../views/look/Look.vue'
 import out from '../views/out/Out.vue'
-import publish_article from '../views/publish_article/Publish_article.vue'
+import publish_article from '../views/release/Release.vue'
 import published from '../views/published/Published.vue'
-// import register from '../views/register/Register.vue'
 import statistics from '../views/statistics/Statistics.vue'
 import edit from '../views/edit/Edit.vue'
 
@@ -22,21 +20,24 @@ Vue.use(VueRouter)
 const routes = [
   {
     path:"/",
-    redirect:'/home_page'
+    redirect:'/main',        //主页
   },
   {
     path: '/home',
     name: 'home',
-    component: Home
+    component: Home,        //父组件
   },
   {
     path:'/derive',
     component:Home,
-    children:[
+    children:[                //导出表格路由
       {
         path:"",
         name:"derive",
-        component:derive
+        component:derive,
+        meta:{
+          title:'导出表格'
+        }
       }
     ]
   },
@@ -47,7 +48,10 @@ const routes = [
       {
         path:"",
         name:"edit",
-        component:edit
+        component:edit,           //文章编辑路由
+        meta:{
+          title:'文章编辑'
+        }
       }
     ]
   },
@@ -58,18 +62,24 @@ const routes = [
       {
         path:"",
         name:"form",
-        component:form
+        component:form,         //分页表格路由
+        meta:{
+          title:'表格'
+        }
       }
     ]
   },
   {
-    path:'/home_page',
+    path:'/main',
     component:Home,
     children:[
       {
         path:"",
-        name:"home_page",
-        component:home_page
+        name:"home_page",          //首页路由
+        component:home_page,
+        meta:{
+          title:'首页'
+        }
       }
     ]
   },
@@ -79,8 +89,11 @@ const routes = [
     children:[
       {
         path:"",
-        name:"image_upload",
-        component:image_upload
+        name:"image_upload",         //图片上传路由
+        component:image_upload,
+        meta:{
+          title:'图片上传'
+        }
       }
     ]
   },
@@ -89,16 +102,22 @@ const routes = [
     component:Home,
     children:[
       {
-        path:"",
+        path:"",                     //标签页路由
         name:"label",
-        component:label
+        component:label,
+        meta:{
+          title:'标签页'
+        }
       }
     ]
   },
   {
     path:'/logon',
-    name:'logon',
+    name:'logon',                                            //登录页路由
     component:()=>import('../views/logon/Logon.vue'),
+    meta:{
+      title:'登录'
+    }
   },
   {
     path:'/look',
@@ -106,8 +125,11 @@ const routes = [
     children:[
       {
         path:"",
-        name:"look",
-        component:look
+        name:"look",                //查看页路由
+        component:look,
+        meta:{
+          title:'查看文章'
+        }
       }
     ]
   },
@@ -118,36 +140,48 @@ const routes = [
       {
         path:"",
         name:"out",
-        component:out
+        component:out,            //退出登录页路由
+        meta:{
+          title:'退出'
+        }
       }
     ]
   },
   {
-    path:'/publish_article',
+    path:'/release',
     component:Home,
     children:[
       {
         path:"",
-        name:"publish_article",
-        component:publish_article
+        name:"publish_article",                 //发表文章页路由
+        component:publish_article,
+        meta:{
+          title:'发表文章'
+        }
       }
     ]
   },
   {
     path:'/published',
     component:Home,
-    children:[
+    children:[                           //已发表页路由
       {
         path:"",
         name:"published",
-        component:published
+        component:published,
+        meta:{
+          title:'已发表'
+        }
       }
     ]
   },
   {
     path:'/register',
     name:'register',
-    component:()=>import('../views/register/Register.vue'),
+    component:()=>import('../views/register/Register.vue'),             //注册页路由
+    meta:{
+      title:'注册'
+    }
   },
   {
     path:'/statistics',
@@ -155,8 +189,11 @@ const routes = [
     children:[
       {
         path:"",
-        name:"statistics",
-        component:statistics
+        name:"statistics",                     //统计页路由
+        component:statistics,
+        meta:{
+          title:'统计'
+        }
       }
     ]
   },
@@ -170,6 +207,7 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to,from,next)=>{
+  document.title=to.meta.title
   let user=localStorage.getItem("user");
   if(to.path==="/logon" || to.path==="/register") {
     next();

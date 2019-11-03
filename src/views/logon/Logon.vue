@@ -100,7 +100,7 @@
                   this.$store.state.username=this.ruleForm.username;   //把用户名存入state
                   this.$store.state.time=res.data[0].date;            //把登录时间传给state
                   localStorage.setItem('user',JSON.stringify({user:res}))   //把信息存入浏览器localStorage
-                  this.$router.push("/home_page")    //登录成功，跳转到后台管理首页
+                  this.$router.push("/main")    //登录成功，跳转到后台管理首页
                 }else if(res.code===1) {
                   // 登录失败
                   this.$message.error(res.message)

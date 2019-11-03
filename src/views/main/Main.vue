@@ -6,7 +6,7 @@
           <div class="right">
             <img src="../../../public/images/img1.png" alt="">
             <div class="total">
-              <div class="title">New Visits</div>
+              <div class="title">New Visits</div>                                 <!--New Visits 参数-->
               <countTo :startVal='startVal' :endVal='visits' :duration='3000' ></countTo>
             </div>
           </div>
@@ -17,7 +17,7 @@
           <div class="right">
             <img src="../../../public/images/img2.png" alt="">
             <div class="total">
-              <div class="title">Messages</div>
+              <div class="title">Messages</div>                                   <!--Messages 参数-->
               <countTo :startVal='startVal' :endVal='messages' :duration='3000'></countTo>
             </div></div>
         </el-card>
@@ -27,7 +27,7 @@
           <div class="right">
             <img src="../../../public/images/img3.png" alt="">
             <div class="total">
-              <div class="title">Purchases</div>
+              <div class="title">Purchases</div>                                    <!--Purchases 参数-->
               <countTo :startVal='startVal' :endVal='purchases' :duration='3000'></countTo>
             </div>
           </div>
@@ -38,27 +38,27 @@
           <div class="right">
             <img src="../../../public/images/img4.png" alt="">
             <div class="total">
-              <div class="title">Shoppings</div>
+              <div class="title">Shoppings</div>                                         <!--Shoppings 参数-->
               <countTo :startVal='startVal' :endVal='shopping' :duration='3000'></countTo>
             </div>
           </div>
         </el-card>
       </el-col>
     </div>
-    <div class="zhexian"><ve-line :data="chartData" :settings="chartSettings"></ve-line></div>
+    <div class="zhexian"><ve-line :data="chartData" :settings="chartSettings"></ve-line></div>      <!--折线图-->
     <div class="threeimages">
       <div class="image">
-        <ve-radar :data="radarChat" :settings="chartSettings2"></ve-radar>
+        <ve-radar :data="radarChat" :settings="chartSettings2"></ve-radar>            <!--雷达图-->
       </div>
       <div class="image">
-        <ve-pie :data="ringChat" :settings="chartSettings3"></ve-pie>
+        <ve-pie :data="ringChat" :settings="chartSettings3"></ve-pie>                 <!--玫瑰图-->
       </div>
       <div class="image">
-        <ve-histogram :data="histogramChat" :settings="chartSettings4"></ve-histogram>
+        <ve-histogram :data="histogramChat" :settings="chartSettings4"></ve-histogram>        <!--柱状图-->
       </div>
     </div>
     <div class="bottom">
-      <div class="bottom-left">
+      <div class="bottom-left">                               <!--表格-->
         <div class="table-header">
           <div class="num">Order_No</div>
           <div class="price">Price</div>
@@ -73,26 +73,85 @@
           </div>
         </div>
       </div>
-      <div class="bottom-center">
-        <div class="header">
-          <div style="width: 50px;height: 50px;text-align: center" @click="checkedAll">
-            <i class="el-icon-arrow-down check"></i>
+      <div class="box list">                                 <!--Todo List  任务栏-->
+        <div class="title">
+          <div @click="checkAll">
+            <img src="../../../public/images/xiajiantou.png" alt="箭头" class="arrow" />
           </div>
-          <span class="right">Todo List</span>
+          <div>Todo List</div>
         </div>
-        <div v-for="(item,index) in todoList" :key="index" class="todo">
-          <div v-if="item.checked === !check" class="yuan" @click="itemClick"><i class="el-icon-check"></i></div>
-          <div v-if="item.checked === check" class="yuan" @click="itemClick"></div>
-          <div class="title">{{item.name}}</div>
+        <!--    所有选项-->
+        <div class="content" v-if="num === 0">                       <!--给All绑参数，为0再显示相应类容-->
+          <div v-if="this.todoList.length === 0">0 item</div>
+          <div v-for="(item, index) in todoList" :key="index" class="term">
+            <div class="check" @click="check(index)">
+              <img
+                  src="../../../public/images/dui.png"
+                  alt="对号"
+                  v-if="item.checked"
+                  class="yes"
+              />
+            </div>
+            <div>{{ item.name }}</div>
+            <img
+                src="../../../public/images/del.png"
+                alt="删除"
+                class="del"
+                @click="del(index)"
+            />
+          </div>
         </div>
-        <div>
-          <div class="line"></div>
+        <!--    正在进行的选项-->
+        <div v-if="num === 1" class="content">                      <!--给Active绑参数，为0再显示相应类容-->
+          <div v-if="this.activeList.length === 0">0 item</div>
+          <div v-for="(item, index) in activeList" :key="index" class="term">
+            <div class="check" @click="checkActive(index)">
+              <img
+                  src="../../../public/images/dui.png"
+                  alt="对号"
+                  v-if="item.checked"
+                  class="yes"
+              />
+            </div>
+            <div>{{ item.name }}</div>
+            <img
+                src="../../../public/images/del.png"
+                alt="删除"
+                class="del"
+                @click="delActive(index, item)"
+            />
+          </div>
         </div>
-        <div class="bottom">
-          <div class="one">{{}}items left</div>
-          <div class="two">All</div>
-          <div class="three">Active</div>
-          <div class="four">Completed</div>
+        <!--    已完成的选项-->
+        <div v-if="num === 2" class="content">                 <!--给completed绑参数，为0再显示相应类容-->
+          <div v-if="this.completedList.length === 0">0 item</div>
+          <div v-for="(item, index) in completedList" :key="index" class="term">
+            <div class="check" @click="checkCompleted(index)">
+              <img
+                  src="../../../public/images/dui.png"
+                  alt="对号"
+                  v-if="item.checked"
+                  class="yes"
+              />
+            </div>
+            <div>{{ item.name }}</div>
+            <img
+                src="../../../public/images/del.png"
+                alt="删除"
+                class="del"
+                @click="delCompleted(index, item)"
+            />
+          </div>
+        </div>
+        <div class="footer">
+          <div>{{ sum }} items left</div>
+          <div class="all" :class="{ num: this.num === 0 }" @click="set(0)">    <!--传相应参数，同是添加set点击事件-->
+            All
+          </div>
+          <div :class="{ num: this.num === 1 }" @click="setActive(1)">Active</div>         <!--传相应参数，同是添加setActive点击事件-->
+          <div :class="{ num: this.num === 2 }" @click="setCompleted(2)">            <!--传相应参数，同是添加setCompleted点击事件-->
+            Completed
+          </div>
         </div>
       </div>
       <div class="bottom-right">
@@ -100,7 +159,7 @@
           <img src="../../../public/images/img5.png" alt="" class="img">
           <div class="slip">
             <div v-for="(item,index) in slip" :key="index">
-              <div v-if="item.progress<1">
+              <div v-if="item.progress<1">          <!--elment进条度图-->
                 <div>{{item.name}}</div>
                 <el-progress :percentage="item.progress*100">
                 </el-progress>
@@ -151,9 +210,11 @@
         dimension: ['date']
       }
       return {
-        check:false,
-        checkAll:false,
-        todoList:[],
+        activeList: [],        //用来装todo list任务栏active数组内容
+        completedList: [],          //用来装todo list任务栏completed数组内容
+        checkAlled: false,
+        num: 0,                  //定义参数，实现点击转换内容的目的
+        todoList:[],              //用来装todo list任务栏all数组内容
         slip:[],
         tableData:[],
         chartData: {
@@ -178,7 +239,7 @@
         },
         homeData:{},
         homeChat:{},
-        pie:[],
+        pie:[],         //装饼图数据
         startVal: 0,
         visits:0,
         messages:0,
@@ -251,13 +312,56 @@
           console.log(err)  //报错打印
         })
       },
-      itemClick(){
-        // this.check=!this.check
+      check(index) {
+        this.todoList[index].checked = !this.todoList[index].checked;      //点击后，将每项数据checkAlled属性改为true
+        this.checkAlled = this.todoList.every(item => {                    //全选，将全部checkAlled改为true
+          return item.checked === true;
+        });
       },
-      checkedAll(){
-        this.check=!this.checkAll
+      checkActive(index) {
+        this.activeList[index].checked = !this.activeList[index].checked;       //Active栏里，点击，将每项数据checkAlled属性改为true
+        this.checkAlled = this.todoList.every(item => {                                //全选，将Active栏里全部checkAlled改为true
+          return item.checked === true;
+        });
+      },
+      checkCompleted(index) {
+        this.completedList[index].checked = !this.completedList[index].checked;      //Completed栏里，点击，将每项数据checkAlled属性改为true
+        this.checkAlled = this.todoList.every(item => {                              //全选，将Completed栏里全部checkAlled改为true
+          return item.checked === true;
+        });
+      },
+      checkAll() {
+        this.checkAlled = !this.checkAlled;           //全选点击，将值改为相反值
+        this.todoList.map(item => {
+          item.checked = this.checkAlled;              //让内容的checkAlled值与全选值相等
+        });
+      },
+      del(index) {
+        this.todoList.splice(index, 1);             //点击删除，当项数据从数据删除
+      },
+      delActive(index, item) {
+        this.activeList.splice(index, 1);           //Active里点击删除，Active当项数据从数据删除
+        this.todoList.splice(this.todoList.indexOf(item), 1);     //Active里点击删除，all栏里相应内容删除
+      },
+      delCompleted(index, item) {
+        this.completedList.splice(index, 1);                         //Completed里点击删除，Active当项数据从数据删除
+        this.todoList.splice(this.todoList.indexOf(item), 1);          //Completed里点击删除，all栏里相应内容删除
+      },
+      set(data) {
+        this.num = data;
+      },
+      setActive(data) {
+        this.num = data;
+        this.activeList = this.todoList.filter(item => {
+          return item.checked !== true;
+        });
+      },
+      setCompleted(data) {
+        this.num = data;
+        this.completedList = this.todoList.filter(item => {
+          return item.checked === true;
+        });
       }
-
     },
     mounted() {
       this.gethomeData ()
@@ -272,7 +376,17 @@
 
     },
     filters: {},
-    computed: {},
+    computed: {
+      sum() {
+        let sum = this.todoList.length;
+        this.todoList.map(item => {
+          if (item.checked) {
+            sum -= 1;
+          }
+        });
+        return sum;
+      }
+    },
     watch: {},
     directives: {}
   }
@@ -382,90 +496,74 @@
 
         }
       }
-      .bottom-center{
-        background: white;
-        width: 24%;
+      .box, .list {
         margin-left: 1%;
-        .header{
+        width: 24%;
+        background: white;
+        .title {
           display: flex;
-          position: relative;
-          width: 100%;
-          height: 50px;
-          border-bottom: 1px solid silver;
-          .check{
-            width: 15%;
-            line-height: 50px;
-            margin: 0 auto;
+          justify-content: space-between;
+          padding: 12px;
+          border-bottom: 1px solid gainsboro;
+          .arrow {
+            width: 15px;
           }
-          .right{
-            position: absolute;
-            right: 5%;
+        }
+        .content {
+          padding: 12px;
+          height: 328px;
+          .term {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
             font-size: 16px;
-            line-height: 50px;
+            position: relative;
+            &:hover {
+              background: floralwhite;
+            }
+            &:hover .del {
+              display: block;
+            }
+            .check {
+              width: 15px;
+              height: 15px;
+              border-radius: 50%;
+              border: 1px solid lightgrey;
+              margin-right: 10px;
+              position: relative;
+              .yes {
+                width: 14px;
+                position: absolute;
+                top: 50%;
+                margin-top: -7px;
+              }
+            }
+            .del {
+              width: 15px;
+              position: absolute;
+              top: 11px;
+              right: 0;
+              display: none;
+            }
           }
         }
-        .todo{
+        .footer {
           display: flex;
-          height: 35px;
-          align-items: center;
-          margin-top: 3%;
-          margin-left: 3%;
-          .yuan{
-            border: 1px solid lightslategray;
-            width: 19px;
-            height: 19px;
-            border-radius: 50%;
-          }
-          .title{
-            margin-left: 10%;
-          }
-        }
-        .line{
-          border: 1px solid silver;
-          width: 80%;
-          margin: 10px 10%;
-        }
-        .bottom{
-          display: flex;
-          align-items: center;
-          height: 70px;
-          .one{
-            width: 35%;
-            font-size: 14px;
+          justify-content: space-between;
+          border-top: 1px solid gainsboro;
+          margin: 10px;
+          padding: 30px 0 0 20px;
+          font-size: 12px;
+          div {
+            height: 36px;
+            line-height: 36px;
             text-align: center;
           }
-          .two{
-            border: 1px solid white;
-            width: 20%;
-            text-align: center;
-            height: 25px;
-            line-height: 25px;
-            font-size: 14px;
-            &:hover{
-              border: 1px solid navajowhite;
-            }
+          .num {
+            border: 1px solid lightcoral;
           }
-          .three{
-            border: 1px solid white;
-            text-align: center;
-            width: 20%;
-            height: 25px;
-            line-height: 25px;
-            font-size: 14px;
-            &:hover{
-              border: 1px solid navajowhite;
-            }
-          }
-          .four{
-            border: 1px solid white;
-            text-align: center;
-            width: 25%;
-            height: 25px;
-            line-height: 25px;
-            font-size: 14px;
-            &:hover{
-              border: 1px solid navajowhite;
-            }
+          .all {
+            width: 18%;
           }
         }
       }

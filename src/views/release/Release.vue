@@ -2,8 +2,8 @@
   <div class="all">
     <div>
       <div class="top">
-        <div class="look" @click="back">返回</div>         <!--返回编辑按钮-->
-        <div class="fabu" @click="PublishItems">发布</div>       <!--编辑之后发布按钮-->
+        <div class="look" @click="look">查看</div>
+        <div class="fabu" @click="PublishItems()">发布</div>
       </div>
       <div class="main">
         <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
@@ -29,15 +29,15 @@
                 <el-option label="其他" value="其他"></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="来源" prop="source">
-              <el-select v-model="ruleForm.source" placeholder="请选择" autocomplete="off">
+            <el-form-item label="来源" prop="origin">
+              <el-select v-model="ruleForm.origin" placeholder="请选择" autocomplete="off">
                 <el-option label="原创" value="原创"></el-option>
                 <el-option label="转载" value="转载"></el-option>
                 <el-option label="与他人合作" value="与他人合作"></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="重要性" prop="star">
-              <el-select v-model="ruleForm.star" placeholder="请选择" autocomplete="off">
+            <el-form-item label="重要性" prop="importance">
+              <el-select v-model="ruleForm.importance" placeholder="请选择" autocomplete="off">
                 <el-option label="1" value="1"></el-option>
                 <el-option label="2" value="2"></el-option>
                 <el-option label="3" value="3"></el-option>
@@ -45,7 +45,7 @@
                 <el-option label="5" value="5"></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="发布时间">
+            <el-form-item label="发布时间" prop="date">
               <el-date-picker
                   v-model="ruleForm.date"
                   type="datetime"
@@ -58,7 +58,10 @@
         </el-form>
       </div>
       <div class="markdown">
-        <mavon-editor v-model="ruleForm.text"/>       <!--markdown插件-->
+        <mavon-editor v-model="text"/>
+      </div>
+      <div class="bottom">
+        <div class="bottom-fabu" @click="PublishItems()">发布</div>
       </div>
     </div>
   </div>
@@ -67,40 +70,41 @@
 
 <script>
   export default {
-    name: "Edit",
-    components: {},
+    name: "Publish article",
+    components: {
+
+    },
     props: {},
     data() {
       return {
-        id:'',
+        text:'',
         ruleForm: {
-          text:'',          //文章标题
-          abstract: '',     //文章摘要
-          title: '',          //标题
-          author:'',          //作者
-          date:'',            //发布时间
-          source:'',         //来源
-          star:'',              //重要性
-          category:'',         //类目
+          abstract: '',
+          date: '',          //标题
+          author:'',
+          time:'',
+          origin:'',
+          importance:'',
+          category:'',
         },
         rules: {
           abstract:[
-            { required: true, message: '请输入文章摘要', trigger: 'blur' }
+            { required: true, message: '请输入文章摘要', trigger: 'blur' }    //验证码必填
           ],
           title:[
-            { required: true, message: '请输入文章标题', trigger: 'blur' }
+            { required: true, message: '请输入文章标题', trigger: 'blur' }    //验证码必填
           ],
           author:[
-            { required: true, message: '请输入作者', trigger: 'blur' }
+            { required: true, message: '请输入作者', trigger: 'blur' }    //验证码必填
           ],
           category:[
-            { required: true, message: '请选择类目', trigger: 'blur' }
+            { required: true, message: '请选择类目', trigger: 'blur' }    //验证码必填
           ],
-          source:[
-            { required: true, message: '请选择来源', trigger: 'blur' }
+          origin:[
+            { required: true, message: '请选择来源', trigger: 'blur' }    //验证码必填
           ],
-          star:[
-            { required: true, message: '请选择重要性等级', trigger: 'blur' }
+          importance:[
+            { required: true, message: '请选择重要性等级', trigger: 'blur' }    //验证码必填
           ],
         },
         pickerOptions: {
@@ -129,51 +133,41 @@
       }
     },
     methods: {
-      getData () {
-        this.$axios.req('/api/article/article',{_id:this.id}).then(res => {
-          // console.log(res)
-          this.ruleForm = res.data  //拿到数据
-          this.ruleForm.date=Date.now()
-        }).catch(err => {
-          console.log(err)  //报错打印
-        })
-      },
       PublishItems(){
-        this.$axios.req("/api/article/update",{
-          id: this.id,
+        this.$axios.req("api/article/create",{
           title: this.ruleForm.title,
           abstract: this.ruleForm.abstract,
-          author: this.ruleForm.author,
-          category: this.ruleForm.category,             //编辑后发post请求
-          source: this.ruleForm.source,
-          star: this.ruleForm.star,
-          text:this.ruleForm.text,
-          date: this.ruleForm.date
+          author: this.ruleForm.author,                //配置post请求参数
+          category: this.ruleForm.category,
+          source: this.ruleForm.origin,
+          star: this.ruleForm.importance,
+          date: this.ruleForm.date,
+          text:this.text
         })
           .then(res =>{
-            if(res.success){
+            if(res.code ===200){
               this.$message({
                 showClose:true,
-                message:"编辑成功",
+                message:"发布成功",
                 type:"success",
               });
-              this.$router.push("/published")         //编辑后跳转已发布
               this.ruleForm={}
-            }else{
+              this.text=''
+              this.$router.push('/published')
+            }else if(res.code===1) {
+              // 注册失败
               this.$message.error(res.message)
             }
           }).catch(err=>{
           console.log(err);
         })
       },
-      back(){
-        this.$router.push("/published")              //不编辑直接返回发布页
+      look(){
+        this.$router.push("/published")          //点击查看，跳转已发布页
       }
     },
     mounted() {
-      this.id=this.$route.query.id;              //接收id
-      // console.log(this.id);
-      this.getData ()
+
     },
     created() {
 
@@ -192,9 +186,10 @@
       margin:1%;
       width: 98%;
       height: 50px;
+      background: seagreen;
       display: flex;
       align-items: center;
-      justify-content: space-around;
+      justify-content: flex-end;
       .look{
         width: 60px;
         height: 35px;
@@ -218,7 +213,7 @@
       }
     }
     .main{
-      margin:50px 1%;
+      margin:1%;
       width: 98%;
       .center{
         display: flex;
@@ -234,6 +229,16 @@
       height:120px;
       display: flex;
       justify-content: center;
+      .bottom-fabu{
+        width: 70px;
+        height: 35px;
+        border-radius: 5px;
+        background: dodgerblue;
+        line-height: 35px;
+        text-align: center;
+        color: white;
+        margin-top: 40px;
+      }
     }
   }
 </style>
